@@ -82,12 +82,12 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
       if (!res.ok) throw new Error(`[dlImg] Failed to download image: ${res.statusText}`);
       return res.arrayBuffer();
     })
-    .then(buffer => {
+    .then(async(buffer) => {
       if (useStaticImage) {
         fs.writeFileSync(filePath, Buffer.from(buffer));
         console.log(`[dlImg] Image saved to: ${filePath}`);
       } else {
-        return htmlToPng(buffer, filePath)
+        await htmlToPng(buffer, filePath)
       }
     })
     .then(() => {
