@@ -1735,66 +1735,79 @@ core.setSecret(GITHUB_TOKEN);
 /**
  * Downloads the image and commits/pushes it to GitHub.
  */
-async function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
-  try {
-    let url = "";
-    if (useStaticImage) {
-      console.log('[dlImg] Using static image URL.');
-      url = `https://tryhackme-badges.s3.amazonaws.com/${username}.png`;
-    } else {
-      console.log('[dlImg] Using dynamic image URL.');
-      url = `https://tryhackme.com/api/v2/badges/public-profile?userPublicId=${userPublicId}`;
-    }
-    console.log(`[dlImg] Downloading image from: ${url}`);
-    const res = await fetch(url);
-
-    if (!res.ok) throw new Error(`[dlImg] Failed to download image: ${res.statusText}`);
-
-    await new Promise((resolve, reject) => {
-      const fileStream = fs.createWriteStream(filePath);
-      res.body.pipe(fileStream);
-      res.body.on("error", err => {
-        console.error(`[dlImg] Error while downloading image: ${err.message}`);
-        reject(err);
-      });
-      fileStream.on("finish", () => {
-        console.log(`[dlImg] Image saved to: ${filePath}`);
-        resolve();
-      });
-    });
-
-    console.log('[dlImg] Setting git user configuration...');
-    await exec('git', ['config', '--global', 'user.email', COMMITTER_EMAIL]);
-    await exec('git', ['config', '--global', 'user.name', COMMITTER_USERNAME]);
-
-    if (githubToken) {
-      console.log('[dlImg] Updating git remote URL...');
-      await exec('git', [
-        'remote', 'set-url', 'origin',
-        `https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-      ]);
-    }
-
-    console.log(`[dlImg] Adding file to git: ${filePath}`);
-    await exec('git', ['add', filePath]);
-
-    try {
-      console.log('[dlImg] Committing changes...');
-      await exec('git', ['commit', '-m', COMMIT_MESSAGE]);
-    } catch (e) {
-      console.log('[dlImg] No changes to commit.');
-      return;
-    }
-    console.log('[dlImg] Pushing changes to remote...');
-    await exec('git', ['push']);
-    console.log('[dlImg] Image downloaded and changes pushed successfully.');
-  } catch (error) {
-    console.error('[dlImg] Error:', error.outputData || error.message);
+function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
+  let url = "";
+  if (useStaticImage) {
+    console.log('[dlImg] Using static image URL.');
+    url = `https://tryhackme-badges.s3.amazonaws.com/${username}.png`;
+  } else {
+    console.log('[dlImg] Using dynamic image URL.');
+    url = `https://tryhackme.com/api/v2/badges/public-profile?userPublicId=${userPublicId}`;
   }
+  console.log(`[dlImg] Downloading image from: ${url}`);
+
+  fetch(url)
+    .then(res => {
+      if (!res.ok) throw new Error(`[dlImg] Failed to download image: ${res.statusText}`);
+      return new Promise((resolve, reject) => {
+        const fileStream = fs.createWriteStream(filePath);
+        res.body.pipe(fileStream);
+        res.body.on("error", err => {
+          console.error(`[dlImg] Error while downloading image: ${err.message}`);
+          reject(err);
+        });
+        fileStream.on("finish", () => {
+          console.log(`[dlImg] Image saved to: ${filePath}`);
+          resolve();
+        });
+      });
+    })
+    .then(() => {
+      console.log('[dlImg] Setting git user configuration...');
+      return exec('git', ['config', '--global', 'user.email', COMMITTER_EMAIL]);
+    })
+    .then(() => exec('git', ['config', '--global', 'user.name', COMMITTER_USERNAME]))
+    .then(() => {
+      if (githubToken) {
+        console.log('[dlImg] Updating git remote URL...');
+        return exec('git', [
+          'remote', 'set-url', 'origin',
+          `https://${githubToken}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+        ]);
+      }
+    })
+    .then(() => {
+      console.log(`[dlImg] Adding file to git: ${filePath}`);
+      return exec('git', ['add', filePath]);
+    })
+    .then(() => {
+      console.log('[dlImg] Committing changes...');
+      return exec('git', ['commit', '-m', COMMIT_MESSAGE]);
+    })
+    .then(() => {
+      console.log('[dlImg] Pushing changes to remote...');
+      return exec('git', ['push']);
+    })
+    .then(() => {
+      console.log('[dlImg] Image downloaded and changes pushed successfully.');
+    })
+    .catch(error => {
+      if (error.code === 1 && error.outputData && error.outputData.includes('nothing to commit')) {
+        console.log('[dlImg] No changes to commit.');
+      } else {
+        console.error('[dlImg] Error:', error.outputData || error.message);
+      }
+    });
 }
 
 console.log('[main] Starting badge workflow...');
-dlImg(GITHUB_TOKEN, FILEPATH, THM_USERNAME, USE_STATIC_IMAGE, USER_PUBLIC_ID).catch((error) => {
+dlImg(
+  GITHUB_TOKEN, 
+  FILEPATH, 
+  THM_USERNAME, 
+  USE_STATIC_IMAGE, 
+  USER_PUBLIC_ID)
+.catch((error) => {
   console.log('[main] Nothing to commit.');
 });
 
