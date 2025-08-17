@@ -87,7 +87,7 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
         fs.writeFileSync(filePath, Buffer.from(buffer));
         console.log(`[dlImg] Image saved to: ${filePath}`);
       } else {
-        return htmlToPng(html, filePath)
+        return htmlToPng(Buffer.from(buffer), filePath)
       }
     })
     .then(() => {
