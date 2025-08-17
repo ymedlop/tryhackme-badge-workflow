@@ -83,6 +83,8 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
       } else {
       const htmlContent = Buffer.from(buffer).toString('utf8');
       console.log('[dlImg] Converting HTML to PNG...');
+      console.log(`[dlImg] Saving PNG to: ${filePath}`);
+      console.log(htmlContent);
       await htmlToPng(htmlContent, filePath);
       }
     })
