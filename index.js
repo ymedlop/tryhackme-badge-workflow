@@ -122,6 +122,8 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
     });
 }
 
+if (!useStaticImage) exec('npx', ['puppeteer', 'browsers', 'install', 'chrome'], { stdio: 'inherit' })
+
 console.log('[main] Starting badge workflow...');
 dlImg(
   GITHUB_TOKEN, 
