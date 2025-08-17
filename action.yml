@@ -45,7 +45,8 @@ runs:
       with:
         node-version: '20'
     - name: Run badge workflow
-      run: ls -la && node dist/index.js
+      run: node dist/index.js
+      working-directory: cd /workspaces/tryhackme-badge-workflow
       shell: bash
 branding:
   icon: 'cloud-lightning'
