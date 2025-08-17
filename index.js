@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const core = require('@actions/core');
 const fs = require('fs');
+const puppeteer = require('puppeteer');
 
 const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
 const FILEPATH = core.getInput("image_path");
@@ -43,6 +44,19 @@ function exec(cmd, args = [], options = {}) {
 
 core.setSecret(GITHUB_TOKEN);
 
+async function htmlToPng(html, outputPath) {
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ]
+  });
+  const page = await browser.newPage();
+  await page.setContent(html, { waitUntil: 'networkidle0' });
+  await page.screenshot({ path: outputPath, fullPage: true });
+  await browser.close();
+}
+
 /**
  * Downloads the image and commits/pushes it to GitHub.
  */
@@ -63,8 +77,12 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
       return res.arrayBuffer();
     })
     .then(buffer => {
-      fs.writeFileSync(filePath, Buffer.from(buffer));
-      console.log(`[dlImg] Image saved to: ${filePath}`);
+      if (useStaticImage) {
+        fs.writeFileSync(filePath, Buffer.from(buffer));
+        console.log(`[dlImg] Image saved to: ${filePath}`);
+      } else {
+        return htmlToPng(html, filePath)
+      }
     })
     .then(() => {
       console.log('[dlImg] Setting git user configuration...');
