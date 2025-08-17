@@ -3,14 +3,14 @@ const core = require('@actions/core');
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
-const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
-const FILEPATH = core.getInput("image_path");
-const THM_USERNAME = core.getInput("username");
-const COMMITTER_USERNAME = core.getInput('committer_username');
-const COMMITTER_EMAIL = core.getInput('committer_email');
-const COMMIT_MESSAGE = core.getInput('commit_message');
-const USE_STATIC_IMAGE = core.getInput('use_static_image') === "true";
-const USER_PUBLIC_ID = core.getInput('user_public_id');
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const FILEPATH = process.env.IMAGE_PATH;
+const THM_USERNAME = process.env.USERNAME;
+const COMMITTER_USERNAME = process.env.COMMITTER_USERNAME;
+const COMMITTER_EMAIL = process.env.COMMITTER_EMAIL;
+const COMMIT_MESSAGE = process.env.COMMIT_MESSAGE;
+const USE_STATIC_IMAGE = process.env.USE_STATIC_IMAGE === "true";
+const USER_PUBLIC_ID = process.env.USER_PUBLIC_ID;
 
 /*
  * Executes a command and returns its result as promise
