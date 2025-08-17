@@ -47,15 +47,15 @@ runs:
     - name: Run badge workflow
       run: node ${GITHUB_ACTION_PATH}/dist/index.js
       shell: bash
-      with:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        IMAGE_PATH: ${{ inputs.image_path }}
-        USERNAME: ${{ inputs.username }}
-        COMMITTER_USERNAME: ${{ inputs.committer_username }}
-        COMMITTER_EMAIL: ${{ inputs.committer_email }}
-        COMMIT_MESSAGE: ${{ inputs.commit_message }}
-        USE_STATIC_IMAGE: ${{ inputs.use_static_image }}
-        USER_PUBLIC_ID: ${{ inputs.user_public_id }}
+  with:
+    GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+    IMAGE_PATH: ${{ inputs.image_path }}
+    USERNAME: ${{ inputs.username }}
+    COMMITTER_USERNAME: ${{ inputs.committer_username }}
+    COMMITTER_EMAIL: ${{ inputs.committer_email }}
+    COMMIT_MESSAGE: ${{ inputs.commit_message }}
+    USE_STATIC_IMAGE: ${{ inputs.use_static_image }}
+    USER_PUBLIC_ID: ${{ inputs.user_public_id }}
 
 branding:
   icon: 'cloud-lightning'
