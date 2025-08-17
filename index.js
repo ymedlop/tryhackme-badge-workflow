@@ -62,7 +62,7 @@ async function htmlToPng(html, outputPath) {
             .then(() => page.screenshot({ 
               path: outputPath, 
               fullPage: false,
-              clip: { x: 0, y: 0, WIDTH, HEIGHT }
+              clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT }
             }))
             .then(() => browser.close());
         });
