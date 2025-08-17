@@ -13,10 +13,6 @@ const USER_PUBLIC_ID = core.getInput('user_public_id');
 
 /*
  * Executes a command and returns its result as promise
- * @param cmd {string} command to execute
- * @param args {array} command line args
- * @param options {Object} extra options
- * @return {Promise<Object>}
  */
 function exec(cmd, args = [], options = {}) {
   console.log(`[exec] Running command: ${cmd} ${args.join(' ')}`);
@@ -25,7 +21,6 @@ function exec(cmd, args = [], options = {}) {
     const app = spawn(cmd, args, { ...options, stdio: 'pipe' });
 
     if (app.stdout) app.stdout.on('data', data => {
-       // Only needed for pipes
       outputData += data.toString();
       process.stdout.write(`[exec][stdout] ${data.toString()}`);
     });
@@ -65,18 +60,11 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
   fetch(url)
     .then(res => {
       if (!res.ok) throw new Error(`[dlImg] Failed to download image: ${res.statusText}`);
-      return new Promise((resolve, reject) => {
-        const fileStream = fs.createWriteStream(filePath);
-        res.body.pipe(fileStream);
-        res.body.on("error", err => {
-          console.error(`[dlImg] Error while downloading image: ${err.message}`);
-          reject(err);
-        });
-        fileStream.on("finish", () => {
-          console.log(`[dlImg] Image saved to: ${filePath}`);
-          resolve();
-        });
-      });
+      return res.arrayBuffer();
+    })
+    .then(buffer => {
+      fs.writeFileSync(filePath, Buffer.from(buffer));
+      console.log(`[dlImg] Image saved to: ${filePath}`);
     })
     .then(() => {
       console.log('[dlImg] Setting git user configuration...');
@@ -123,6 +111,8 @@ dlImg(
   THM_USERNAME, 
   USE_STATIC_IMAGE, 
   USER_PUBLIC_ID
-).catch((error) => {
-  console.log('[main] Nothing to commit.');
-});
+)
+
+module.exports = {
+  exec
+};
