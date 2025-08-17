@@ -122,7 +122,7 @@ dlImg(
   FILEPATH, 
   THM_USERNAME, 
   USE_STATIC_IMAGE, 
-  USER_PUBLIC_ID)
-.catch((error) => {
+  USER_PUBLIC_ID
+).catch((error) => {
   console.log('[main] Nothing to commit.');
 });
