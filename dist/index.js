@@ -51,16 +51,20 @@ function exec(cmd, args = [], options = {}) {
 core.setSecret(GITHUB_TOKEN);
 
 async function htmlToPng(html, outputPath) {
-  const browser = await puppeteer.launch({
+  return puppeteer.launch({
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox'
     ]
+  })
+  .then(browser => {
+    return browser.newPage()
+      .then(page => {
+        return page.setContent(html, { waitUntil: 'networkidle0' })
+          .then(() => page.screenshot({ path: outputPath, fullPage: true }))
+          .then(() => browser.close());
+      });
   });
-  const page = await browser.newPage();
-  await page.setContent(html, { waitUntil: 'networkidle0' });
-  await page.screenshot({ path: outputPath, fullPage: true });
-  await browser.close();
 }
 
 /**
@@ -82,16 +86,15 @@ function dlImg(githubToken, filePath, username, useStaticImage, userPublicId) {
       if (!res.ok) throw new Error(`[dlImg] Failed to download image: ${res.statusText}`);
       return res.arrayBuffer();
     })
-    .then(async (buffer) => {
+    .then(buffer => {
       if (useStaticImage) {
       fs.writeFileSync(filePath, Buffer.from(buffer));
       console.log(`[dlImg] Image saved to: ${filePath}`);
       } else {
       const htmlContent = Buffer.from(buffer).toString('utf8');
       console.log('[dlImg] Converting HTML to PNG...');
-      console.log(`[dlImg] Saving PNG to: ${filePath}`);
-      console.log(htmlContent);
-      await htmlToPng(htmlContent, filePath);
+      console.log(`[dlImg] Image saved to: ${filePath}`);
+      return htmlToPng(htmlContent, filePath);
       }
     })
     .then(() => {
