@@ -9,6 +9,9 @@ const core = __nccwpck_require__(37484);
 const fs = __nccwpck_require__(79896);
 const puppeteer = __nccwpck_require__(57699);
 
+const WIDTH = 329;
+const HEIGHT = 88;
+
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const FILEPATH = process.env.IMAGE_PATH;
 const THM_USERNAME = process.env.USERNAME;
@@ -60,9 +63,15 @@ async function htmlToPng(html, outputPath) {
   .then(browser => {
     return browser.newPage()
       .then(page => {
-        return page.setContent(html, { waitUntil: 'networkidle0' })
-          .then(() => page.screenshot({ path: outputPath, fullPage: true }))
-          .then(() => browser.close());
+        page.setViewport({ width: WIDTH, height: HEIGHT }).then(() => {
+          return page.setContent(html, { waitUntil: 'networkidle0' })
+            .then(() => page.screenshot({ 
+              path: outputPath, 
+              fullPage: false,
+              clip: { x: 0, y: 0, WIDTH, HEIGHT }
+            }))
+            .then(() => browser.close());
+        });
       });
   });
 }
