@@ -35,8 +35,18 @@ inputs:
     required: true
 
 runs:
-  using: node20
-  main: dist/index.js
+  using: composite
+  steps:
+    - name: Install Chrome for Puppeteer
+      run: npx puppeteer browsers install chrome
+      shell: bash
+    - name: Run main action
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Run badge workflow
+      run: node dist/index.js
+      shell: bash
 branding:
   icon: 'cloud-lightning'
   color: 'red'
