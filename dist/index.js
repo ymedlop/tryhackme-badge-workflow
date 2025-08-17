@@ -14,7 +14,7 @@ const THM_USERNAME = core.getInput("username");
 const COMMITTER_USERNAME = core.getInput('committer_username');
 const COMMITTER_EMAIL = core.getInput('committer_email');
 const COMMIT_MESSAGE = core.getInput('commit_message');
-const USE_STATIC_IMAGE = core.getInput('use_static_image') === 'true';
+const USE_STATIC_IMAGE = core.getInput('use_static_image') === "true";
 const USER_PUBLIC_ID = core.getInput('user_public_id');
 
 /*
