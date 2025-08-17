@@ -24,7 +24,7 @@ inputs:
     required: false
   use_static_image:
     description: 'Use static image instead of dynamic'
-    default: true
+    default: "false"
     required: false
   user_public_id:
     description: 'Public ID of the user for the badge'
