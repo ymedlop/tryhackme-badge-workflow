@@ -20,7 +20,7 @@
   "devDependencies": {
     "@vercel/ncc": "^0.38.3",
     "eslint": "^8.0.1",
-    "node": "^20.0.0"
+    "node": "^20.19.5"
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
