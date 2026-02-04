@@ -1,6 +1,6 @@
 {
   "name": "tryhackme-workflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple github action to retrieve tryhackme static badge image and display it on your profile README",
   "main": "index.js",
   "scripts": {
@@ -23,8 +23,8 @@
     "node": "^20.19.5"
   },
   "dependencies": {
-    "@actions/github": "^6.0.1",
     "@actions/core": "^1.11.1",
-    "puppeteer": "^24.19.0"
+    "@actions/github": "^9.0.0",
+    "puppeteer": "^24.36.1"
   }
 }
