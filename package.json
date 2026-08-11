@@ -23,7 +23,7 @@
     "node": "^20.19.5"
   },
   "dependencies": {
-    "@actions/core": "^1.11.1",
+    "@actions/core": "^3.0.0",
     "@actions/github": "^9.0.0",
     "puppeteer": "^24.36.1"
   }
