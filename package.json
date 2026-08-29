@@ -19,7 +19,7 @@
   "homepage": "https://github.com/p4p1/tryhackme-workflow#readme",
   "devDependencies": {
     "@vercel/ncc": "^0.38.3",
-    "eslint": "^8.0.1",
+    "eslint": "^10.0.0",
     "node": "^20.19.5"
   },
   "dependencies": {
